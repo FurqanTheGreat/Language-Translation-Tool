@@ -1,47 +1,47 @@
 from googletrans import Translator
+from language_map import LANGUAGE_MAP
 
-# Initializing the translator
+# Initialize translator
 translator = Translator()
 
+# Language name to code mapping
+
+# Function to get language code from name
+def get_language_code(language_name):
+    return LANGUAGE_MAP.get(language_name.lower())
+
 # Function to translate text
-def translate_text(text, src_language, dest_language):
-    """
-    Translate text from one language to another.
-    
-    Parameters:
-        text (str): Text to be translated.
-        src_language (str): Source language (e.g., 'en' for English, 'es' for Spanish), or leave it empty to detect automatically.
-        dest_language (str): Target language (e.g., 'fr' for French, 'de' for German).
-        
-    Returns:
-        tuple: Translated text and detected language (if source language is auto-detected).
-    """
+def translate_text(text, src_language_name, dest_language_name):
     try:
-        if src_language:
-            translation = translator.translate(text, src=src_language, dest=dest_language)
-            return translation.text, src_language
+        # Convert language names to codes
+        src_language_code = get_language_code(src_language_name) if src_language_name else None
+        dest_language_code = get_language_code(dest_language_name)
+
+        if not dest_language_code:
+            return f"Error: Destination language '{dest_language_name}' is not supported."
+
+        # Perform translation
+        if src_language_code:
+            translation = translator.translate(text, src=src_language_code, dest=dest_language_code)
+            detected_language = src_language_name
         else:
             detection = translator.detect(text)
             detected_language = detection.lang
-            translation = translator.translate(text, src=detected_language, dest=dest_language)
-            return translation.text, detected_language
+            translation = translator.translate(text, src=detection.lang, dest=dest_language_code)
+
+        return f"\tSource Language: {detected_language.capitalize()}\n\tTranslated Text ({src_language_name} -> {dest_language_name}):\n\t{translation.text}"
+
     except Exception as e:
-        return f"Error during translation: {e}", None
+        return f"Error during translation: {e}"
 
 # User input
-print("\n\tSimple Language Translation Tool")
-print("\n\tSupported languages: 'en' (English), 'es' (Spanish), 'fr' (French), 'de' (German), etc. \n\tFor a complete list of language codes, visit: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes")
+print("\nSimple Language Translation Tool")
+print("\n\tSupported languages: English, Spanish, French, German, etc.")
+
 text = input("\n\tEnter text to translate: ")
-src_language = input("\tEnter source language code (leave blank for auto-detection): ").lower()
-dest_language = input("\tEnter destination language code: ").lower()
+src_language = input("\tEnter source language (leave blank for auto-detection): ").lower()
+dest_language = input("\tEnter destination language: ").lower()
 
 # Translate text
-translated_text, detected_language = translate_text(text, src_language, dest_language)
-
-# Print results
-if src_language:
-    print(f"\n\tSource Language: {src_language} (Provided)")
-else:
-    print(f"\n\tDetected Language: {detected_language} (Auto-detected)")
-
-print(f"\n\tTranslated Text ({detected_language if not src_language else src_language} -> {dest_language}):\n\t{translated_text}")
+result = translate_text(text, src_language, dest_language)
+print(f"\n{result}")

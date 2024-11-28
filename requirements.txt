@@ -1,0 +1,19 @@
+googletrans==4.0.0-rc1
+
+# User input
+print("\n\tSimple Language Translation Tool")
+print("\n\tSupported languages: 'en' (English), 'es' (Spanish), 'fr' (French), 'de' (German), etc. \n\tFor a complete list of language codes, visit: https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes")
+text = input("\n\tEnter text to translate: ")
+src_language = input("\tEnter source language code (leave blank for auto-detection): ").lower()
+dest_language = input("\tEnter destination language code: ").lower()
+
+# Translate text
+translated_text, detected_language = translate_text(text, src_language, dest_language)
+
+# Print results
+if src_language:
+    print(f"\n\tSource Language: {src_language} (Provided)")
+else:
+    print(f"\n\tDetected Language: {detected_language} (Auto-detected)")
+
+print(f"\n\tTranslated Text ({detected_language if not src_language else src_language} -> {dest_language}):\n\t{translated_text}")
